@@ -78,6 +78,9 @@ class VariantCalling extends QScript {
 
   @Argument(shortName = "sample", doc = "Samples to include in Variant Eval", required = false)
   var samples: List[String] = Nil
+  
+  @Argument(shortName = "annotation", doc = "Annotations to use (see http://www.broadinstitute.org/gatk/gatkdocs/ for a list of available annotations). Repeat argument if you want more than one.", required = false)
+  var annotations: List[String] = Nil
 
   @Hidden
   @Argument(doc = "How many ways to scatter/gather", fullName = "scatter_gather", shortName = "sg", required = false)
@@ -240,6 +243,7 @@ class VariantCalling extends QScript {
     this.reference_sequence = t.reference
     if (t.intervals != null) this.intervals :+= t.intervals
     this.scatterCount = nContigs
+    this.annotation = this.annotation ++ annotations
     this.nt = nbrOfThreads
     this.stand_call_conf = if (t.isLowpass) { 4.0 } else { 30.0 }
     this.stand_emit_conf = if (t.isLowpass) { 4.0 } else { 30.0 }
