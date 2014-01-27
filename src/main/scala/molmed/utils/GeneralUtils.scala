@@ -138,7 +138,7 @@ class GeneralUtils(projectName: Option[String], uppmaxConfig: UppmaxConfig) exte
 
     @Output
     val placeHolder: File = ph
-    
+
     import molmed.utils.ReadGroupUtils._
 
     def createRNASeQCInputString(file: File): String = {
@@ -163,15 +163,15 @@ class GeneralUtils(projectName: Option[String], uppmaxConfig: UppmaxConfig) exte
 
   /**
    * InProcessFunction which searches a file tree for files matching metrics.tsv
-   * (the output files from RNA-SeQC) and create a file containing the results 
+   * (the output files from RNA-SeQC) and create a file containing the results
    * from all the separate runs.
-   * 
+   *
    */
   case class createAggregatedMetrics(phs: Seq[File], @Input outputDir: File, @Output aggregatedMetricsFile: File) extends InProcessFunction {
 
     @Input
     val placeHolderSeq: Seq[File] = phs
-    
+
     def run() = {
 
       def getFileTree(f: File): Stream[File] =
@@ -230,6 +230,21 @@ object GeneralUtils {
     for (fileEnding <- Seq("amb", "ann", "bwt", "pac", "sa")) {
       assert(new File(referenceBasePath + "." + fileEnding).exists(), "Could not find index file with file ending: " + fileEnding)
     }
+  }
+
+  /**
+   * Returns the Int with zero padding to the desired length.
+   */
+  def getZerroPaddedIntAsString(i: Int, totalStringLength: Int): String = {
+
+    def rep(n: Int)(f: => String): String = {
+      if (n == 1)
+        f
+      else
+        f + rep(n - 1)(f)
+    }
+
+    rep(totalStringLength - i.toString().length()) { "0" } + i
   }
 
 }
