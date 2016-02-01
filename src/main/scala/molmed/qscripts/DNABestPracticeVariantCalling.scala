@@ -150,6 +150,12 @@ class DNABestPracticeVariantCalling extends QScript
   @Argument(doc = "Emit the original qualities in the BQSR step", fullName = "emit_original_quals", shortName = "orgQuals", required = false)
   var emitOriginalQuals: Boolean = false
 
+  @Argument(doc = "use flag --skip-duplicated with qualimap, i.e skip alignments from analysis. Three modes: " +
+                      "0) skip reads already marked as duplicate in the bam file. " +
+                      "1) skip reads which qualimap believes are duplicates. " +
+                      "2) combine option 1 and 2 ", fullName = "skip_duplicated", shortName = "skipDup", required = false)
+  var skipDuplicated: Int = -1
+
   /**
    * **************************************************************************
    * Hidden Parameters - for dev.
@@ -242,7 +248,7 @@ class DNABestPracticeVariantCalling extends QScript
     uppmaxConfig: UppmaxConfig): Seq[File] = {
 
     val qualityControlUtils = new AlignmentQCUtils(qscript, projectName, generalUtils, qualimapPath)
-    val baseQCOutputFiles = qualityControlUtils.aligmentQC(bamFiles, aligmentQCOutputDir, !notHuman, bedIntervals)
+    val baseQCOutputFiles = qualityControlUtils.aligmentQC(bamFiles, aligmentQCOutputDir, !notHuman, skipDuplicated, bedIntervals)
 
     if (snpGenotypes.isDefined) {
       qualityControlUtils.checkGenotypeConcordance(
